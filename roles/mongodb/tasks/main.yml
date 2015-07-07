@@ -1,0 +1,6 @@
+---
+
+- name: install mongodb package
+  apt: pkg=mongodb state=installed
+  tags:
+    - mongodb

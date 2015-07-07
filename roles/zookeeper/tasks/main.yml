@@ -1,0 +1,10 @@
+---
+
+- name: install zookeeper package
+  apt: pkg={{ item }} state=installed
+  with_items:
+    - zookeeper
+    - zookeeperd
+    - zookeeper-bin
+  tags:
+    - zookeeper

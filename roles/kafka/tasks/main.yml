@@ -1,0 +1,58 @@
+---
+
+# SBT
+
+- name: add jre ppa
+  apt_repository: repo=ppa:webupd8team/java state=present
+
+- name: select the oracle license
+  shell: echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections
+
+- name: install jre
+  apt: pkg=oracle-java7-installer state=latest update-cache=yes force=no
+
+- name: download sbt {{ sbt_version }}
+  get_url: url=http://dl.bintray.com/sbt/debian/sbt-{{ sbt_version }}.deb dest=/tmp/sbt-{{ sbt_version }}.deb mode=0644
+
+- name: install sbt {{ sbt_version }}
+  apt: deb=/tmp/sbt-{{ sbt_version }}.deb state=installed 
+
+# Scala
+
+- name: download scala-{{ scala_version }}
+  get_url: url=http://www.scala-lang.org/files/archive/scala-{{ scala_version }}.deb dest=/tmp/scala-{{ scala_version }}.deb mode=0644 force=no
+
+- name: install Scala {{ scala_version }}
+  apt: deb=/tmp/scala-{{ scala_version }}.deb state=installed 
+
+# Kafka
+
+- name: download kafka {{ kafka_version }}
+  get_url: url=http://www.mirrorservice.org/sites/ftp.apache.org/kafka/{{ kafka_version }}/kafka-{{ kafka_version }}-src.tgz dest=/tmp/kafka-{{ kafka_version }}-src.tar.gz mode=0644 force=no
+
+- name: unpack the tar
+  shell: tar -xzvf /tmp/kafka-{{ kafka_version }}-src.tar.gz chdir=/tmp/ creates=/tmp/kafka-{{ kafka_version }}-src
+
+- name: run sbt update
+  shell: sbt update chdir=/tmp/kafka-{{ kafka_version }}-src creates=/usr/local/kafa-{{ kafka_version }}
+
+- name: run sbt package
+  shell: sbt package chdir=/tmp/kafka-{{ kafka_version }}-src creates=/usr/local/kafa-{{ kafka_version }}
+
+- name: copy kafka into place
+  shell: mv /tmp/kafka-{{ kafka_version }}-src /usr/local/kafa-{{ kafka_version }} creates=/usr/local/kafa-{{ kafka_version }}
+
+- name: symlink /usr/local/kafka to this version
+  shell: ln -s kafa-{{ kafka_version }} kafka chdir=/usr/local creates=/usr/local/kafka
+
+- name: switch scala version numbers
+  replace: dest=/usr/local/kafka/gradle.properties regexp='^scalaVersion=.*$' replace='scalaVersion={{ scala_version }}'
+
+- name: run gradle to build kafka
+  shell: ./gradlew jar chdir=/usr/local/kafka creates=/usr/local/kafka/core/build/
+
+- name: install the kafka service handler
+  template: src=upstart.conf dest=/etc/init/kafka.conf mode=0755
+
+- name: run the kafka service
+  service: name=kafka state=started enabled=yes

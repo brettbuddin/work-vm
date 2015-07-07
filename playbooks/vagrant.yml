@@ -1,0 +1,14 @@
+---
+
+- hosts: vagrant
+  gather_facts: yes
+  sudo: yes
+  vars_files:
+      - ../vars/rbenv.yml
+      - ../vars/kafka.yml
+  roles:
+      - common
+      - mongodb
+      - redis
+      - zookeeper
+      - kafka
