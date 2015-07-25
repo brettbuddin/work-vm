@@ -4,3 +4,8 @@
   apt: pkg=mongodb state=installed
   tags:
     - mongodb
+
+- name: install mongodb.conf
+  copy: src=mongodb.conf dest=/etc/mongodb.conf mode=0644
+  tags:
+    - mongodb
