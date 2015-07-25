@@ -15,6 +15,7 @@ Vagrant.configure(2) do |config|
 
   config.vm.network "private_network", ip: "10.10.10.23"
 
+  config.vm.network "forwarded_port", guest: 5432,  host: 5432  # postgresql
   config.vm.network "forwarded_port", guest: 27017, host: 27017 # mongo
   config.vm.network "forwarded_port", guest: 6379,  host: 6379  # redis
   config.vm.network "forwarded_port", guest: 2181,  host: 2181  # zookeeper
