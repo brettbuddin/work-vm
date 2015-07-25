@@ -1,0 +1,6 @@
+---
+
+- name: install postgresql package
+  apt: pkg=postgresql state=installed
+  tags:
+    - postgresql
