@@ -6,12 +6,9 @@ Vagrant.configure(2) do |config|
     v.memory = 2048
   end
 
-  sync_path = "../"
   unless ENV["WORK_SYNC_PATH"].nil?
-    sync_path = ENV["WORK_SYNC_PATH"]
+    config.vm.synced_folder ENV["WORK_SYNC_PATH"], "/home/vagrant/work", type: :nfs
   end
-
-  config.vm.synced_folder sync_path, "/home/vagrant/work", type: :nfs
 
   config.vm.network "private_network", ip: "10.10.10.23"
 
