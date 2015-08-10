@@ -1,6 +1,26 @@
 ---
 
+- name: add apt repository for postgresql
+  apt_repository: repo='deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main' state=present
+  tags:
+    - postgresql
+
+- name: add apt key for postgresql
+  apt_key: url=https://www.postgresql.org/media/keys/ACCC4CF8.asc state=present
+  tags:
+    - postgresql
+
 - name: install postgresql package
-  apt: pkg=postgresql state=installed
+  apt: pkg=postgresql-9.4 state=installed
+  tags:
+    - postgresql
+
+- name: install pg_hba.conf
+  copy: src=pg_hba.conf dest=/etc/postgresql/9.4/main/pg_hba.conf mode=0644
+  tags:
+    - postgresql
+
+- name: install postgresql.conf
+  copy: src=postgresql.conf dest=/etc/postgresql/9.4/main/postgresql.conf mode=0644
   tags:
     - postgresql
