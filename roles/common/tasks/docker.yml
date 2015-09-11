@@ -41,3 +41,9 @@
   apt:
     pkg: docker-engine
     state: present
+
+- name: add user to docker group
+  user:
+    name: vagrant
+    groups: docker
+    append: yes
