@@ -1,0 +1,43 @@
+- name: Install latest kernel extras
+  apt:
+    pkg: "linux-image-extra-{{ ansible_kernel }}"
+    state: installed
+  register: kernel_extras_install
+
+- name: reboot instance
+  command: /sbin/shutdown -r now
+  register: reboot_result
+  when: "kernel_extras_install|changed"
+
+- name: wait for instance to come online (10 minute timeout)
+  sudo: false
+  local_action:
+    module: wait_for
+    host: "{{ ansible_ssh_host|default(inventory_hostname) }}"
+    port: "{{ ansible_ssh_port|default(ssh_port) }}"
+    delay: 30
+    timeout: 600
+    state: started
+  when: "reboot_result|changed"
+
+- name: install docker repository key
+  apt_key: 
+    id: 2C52609D 
+    url: "https://apt.dockerproject.org/gpg" 
+    state: present
+
+- name: install docker repository
+  apt_repository: 
+    repo: "deb https://apt.dockerproject.org/repo ubuntu-{{ ansible_distribution_release }} main" 
+    update_cache: yes 
+    state: present
+
+- name: install apparmor
+  apt: 
+    pkg: apparmor 
+    state: present
+
+- name: install docker
+  apt:
+    pkg: docker-engine
+    state: present

@@ -23,3 +23,8 @@
   apt: pkg=puppet state=removed
   tags:
     - common
+
+- include: docker.yml
+  tags:
+    - common
+    - docker
