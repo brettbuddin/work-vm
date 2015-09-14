@@ -3,8 +3,6 @@
 - hosts: vagrant
   gather_facts: yes
   sudo: yes
-  vars_files:
-      - ../vars/kafka.yml
   roles:
       - common
       - postgresql
