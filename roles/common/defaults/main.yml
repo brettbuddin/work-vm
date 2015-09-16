@@ -7,4 +7,7 @@ rbenv_plugins:
     - name: ruby-build
       repository: "https://github.com/sstephenson/ruby-build.git"
       version: v20150506
+    - name: rbenv-sudo
+      repository: "https://github.com/dcarley/rbenv-sudo.git"
+      version: v0.1.0
 rbenv_ruby_version: 2.2.2
