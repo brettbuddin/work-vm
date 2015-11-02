@@ -1,6 +1,7 @@
 Vagrant.configure(2) do |config|
-  config.vm.box      = "ubuntu/trusty64"
-  config.vm.hostname = "work"
+  config.vm.box         = "ubuntu/trusty64"
+  config.vm.hostname    = "work"
+  config.ssh.insert_key = false
 
   config.vm.provider "virtualbox" do |v|
     v.memory = 1028
